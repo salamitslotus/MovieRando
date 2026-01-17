@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Movie Rando Fragrant</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <div class="header">
+      <h1>🎬 Movie Rando</h1>
+      <div class="header-controls">
+        <button id="colorCustomizer" class="icon-btn" aria-label="Customize colors">🎨</button>
+        <button id="darkModeToggle" class="icon-btn dark-mode-toggle" aria-label="Toggle dark mode">🌙</button>
+      </div>
+    </div>
+
+    <!-- Color Theme Selector Modal -->
+    <div id="colorModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Choose Theme</h2>
+          <button class="modal-close" aria-label="Close">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="theme-description">Select a color theme to customize your experience</p>
+          <div class="theme-grid">
+            <button class="theme-option" data-theme="default" title="Default Theme">
+              <div class="theme-swatch" style="background-color: #e11d48;"></div>
+              <span>Default</span>
+            </button>
+            <button class="theme-option" data-theme="ocean" title="Ocean Theme">
+              <div class="theme-swatch" style="background-color: #0066cc;"></div>
+              <span>Ocean</span>
+            </button>
+            <button class="theme-option" data-theme="forest" title="Forest Theme">
+              <div class="theme-swatch" style="background-color: #10b981;"></div>
+              <span>Forest</span>
+            </button>
+            <button class="theme-option" data-theme="sunset" title="Sunset Theme">
+              <div class="theme-swatch" style="background-color: #f97316;"></div>
+              <span>Sunset</span>
+            </button>
+            <button class="theme-option" data-theme="purple" title="Purple Theme">
+              <div class="theme-swatch" style="background-color: #7c3aed;"></div>
+              <span>Purple</span>
+            </button>
+            <button class="theme-option" data-theme="indigo" title="Indigo Theme">
+              <div class="theme-swatch" style="background-color: #4f46e5;"></div>
+              <span>Indigo</span>
+            </button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="closeColorModal" class="btn-primary">Done</button>
+        </div>
+      </div>
+    </div>
+    <div id="colorModalBackdrop" class="modal-backdrop"></div>
+
+    <section class="controls">
+      <p class="subtitle">Pick a genre and discover your next favorite movie!</p>
+
+      <div class="genre-tabs" aria-label="Genre tabs">
+        <button class="genre-tab active" data-genre="all">All</button>
+        <button class="genre-tab" data-genre="action">Action</button>
+        <button class="genre-tab" data-genre="comedy">Comedy</button>
+        <button class="genre-tab" data-genre="drama">Drama</button>
+        <button class="genre-tab" data-genre="romance">Romance</button>
+        <button class="genre-tab" data-genre="adventure">Adventure</button>
+        <button class="genre-tab" data-genre="horror">Horror</button>
+        <button class="genre-tab" data-genre="sci-fi">Sci-Fi</button>
+        <button class="genre-tab" data-genre="thriller">Thriller</button>
+        <button class="genre-tab" data-genre="animation">Animation</button>
+        <button class="genre-tab" data-genre="family">Family</button>
+        <button class="genre-tab" data-genre="fantasy">Fantasy</button>
+        <button class="genre-tab" data-genre="crime">Crime</button>
+        <button class="genre-tab" data-genre="documentary">Documentary</button>
+      </div>
+
+      <div class="filters">
+        <div class="genre-search-container">
+          <input id="genre" placeholder="Or type a genre..." />
+          <ul id="genreSuggestions" class="genre-suggestions"></ul>
+        </div>
+        <button id="randomize" class="btn-primary">🎲 Randomize</button>
+      </div>
+      
+    </section>
+
+    <section id="result" class="result">
+      <p class="hint">👆 Pick a genre and click "Randomize"</p>
+    </section>
+
+    <div class="saved-section">
+      <section id="liked" class="saved-list liked-section">
+        <h3>❤️ Liked Movies</h3>
+        <ul id="likedList"></ul>
+        <button id="clearLiked" class="small secondary-btn">Clear liked</button>
+      </section>
+
+      <section id="watched" class="saved-list watched-section">
+        <h3>✓ Already Watched</h3>
+        <ul id="watchedList"></ul>
+        <button id="clearWatched" class="small secondary-btn">Clear watched</button>
+      </section>
+
+      <section id="disliked" class="saved-list disliked-section">
+        <h3>👎 Disliked Movies</h3>
+        <ul id="dislikedList"></ul>
+        <button id="clearDisliked" class="small secondary-btn">Clear disliked</button>
+      </section>
+    </div>
+
+    <div class="export-section">
+      <button id="exportData" class="small secondary-btn">💾 Export Data</button>
+      <button id="importData" class="small secondary-btn">📥 Import Data</button>
+      <input type="file" id="importFile" accept=".json" style="display:none;" />
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

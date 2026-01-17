@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Movie Rando Fragrant</title>
+  <style>
+:root{--bg1:#fff0f2;--bg2:#ffe6ea;--card:#ffffff;--accent:#e11d48;--accent-2:#f472b6;--muted:#7a2840}
+*{box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif}
+body{margin:0;background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 100%);color:#3b0b17;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.container{width:100%;max-width:820px}
+h1{margin:0 0 12px;font-size:28px}
+.controls{background:linear-gradient(180deg,rgba(225,29,72,0.06),rgba(244,114,182,0.03));padding:16px;border-radius:12px;margin-bottom:16px;box-shadow:0 6px 20px rgba(225,29,72,0.08)}
+.providers{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.providers .enjoy{font-size:16px;color:#6b0424;font-weight:600}
+/* genre tabs */
+.genre-tabs{display:flex;gap:8px;margin:8px 0 12px;flex-wrap:wrap}
+.genre-tab{background:transparent;border:1px solid rgba(227,29,72,0.12);padding:8px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
+.genre-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.filters{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+#genre{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(227,29,72,0.12);background:transparent;color:inherit}
+.tiny{font-size:12px;padding:4px 8px;margin-left:8px;border-radius:6px}
+.small{font-size:13px;padding:6px 10px;margin-top:8px;border-radius:8px;background:rgba(227,29,72,0.08);color:var(--muted);border:none;cursor:pointer}
+button{background:var(--accent);border:none;padding:8px 12px;border-radius:8px;color:#fff;cursor:pointer}
+.result{min-height:120px;display:flex;align-items:center;justify-content:center}
+.card{background:linear-gradient(180deg,#fff 0%,#fff6f8 100%);padding:20px;border-radius:12px;width:100%;text-align:center;box-shadow:0 8px 30px rgba(227,29,72,0.08)}
+.card h2{margin:0 0 8px;color:#6b0424}
+.card p{margin:0 0 12px;color:var(--muted)}
+.card a{display:inline-block;padding:8px 12px;border-radius:8px;background:var(--accent-2);color:#fff;text-decoration:none}
+.hint{color:var(--muted)}
+.actions{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.actions .like{background:#ff6b81}
+.actions .dislike{background:#6b6b6b}
+.actions .watchedBtn{background:#ff9fb1;color:#3b0b17}
+.watched{margin-top:16px;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px}
+.watched h3{margin:0 0 8px;color:#6b0424}
+.watched ul{list-style:none;padding:0;margin:0}
+.watched li{padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.03);display:flex;align-items:center;justify-content:space-between}
+@media (min-width:720px){.filters{gap:12px}}
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Movie Rando Fragrant</h1>
+
+    <section class="controls">
+      <div class="providers">
+        <p class="enjoy">Pick a Movie and Enjoy!</p>
+      </div>
+
+      <div class="genre-tabs" aria-label="Genre tabs">
+        <button class="genre-tab active" data-genre="all">All</button>
+        <button class="genre-tab" data-genre="action">Action</button>
+        <button class="genre-tab" data-genre="comedy">Comedy</button>
+        <button class="genre-tab" data-genre="drama">Drama</button>
+        <button class="genre-tab" data-genre="romance">Romance</button>
+        <button class="genre-tab" data-genre="adventure">Adventure</button>
+        <button class="genre-tab" data-genre="horror">Horror</button>
+        <button class="genre-tab" data-genre="sci-fi">Sci-Fi</button>
+        <button class="genre-tab" data-genre="thriller">Thriller</button>
+        <button class="genre-tab" data-genre="animation">Animation</button>
+        <button class="genre-tab" data-genre="family">Family</button>
+        <button class="genre-tab" data-genre="fantasy">Fantasy</button>
+        <button class="genre-tab" data-genre="crime">Crime</button>
+        <button class="genre-tab" data-genre="documentary">Documentary</button>
+      </div>
+
+      <div class="filters">
+        <input id="genre" placeholder="Optional genre (e.g. comedy, drama, sci-fi, romance)" />
+        <button id="randomize">Randomize</button>
+      </div>
+      
+    </section>
+
+    <section id="result" class="result">
+      <p class="hint">Pick a genre and click "Randomize"</p>
+    </section>
+
+    <section id="watched" class="watched">
+      <h3>Already watched</h3>
+      <ul id="watchedList"></ul>
+      <button id="clearWatched" class="small">Clear watched</button>
+    </section>
+  </main>
+
+  <script>
+// Inline script (combined from script.js)
+const netflix = [
+  { title: "Roma", year: 2018, genre: "drama", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "The Irishman", year: 2019, genre: "crime", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Marriage Story", year: 2019, genre: "drama", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Bird Box", year: 2018, genre: "thriller", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Extraction", year: 2020, genre: "action", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "The Trial of the Chicago 7", year: 2020, genre: "drama", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Enola Holmes", year: 2020, genre: "adventure", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Don't Look Up", year: 2021, genre: "satire", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Glass Onion", year: 2022, genre: "mystery", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "The Gray Man", year: 2022, genre: "action", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Army of the Dead", year: 2021, genre: "action", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "To All the Boys I've Loved Before", year: 2018, genre: "romance", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "The Kissing Booth", year: 2018, genre: "romance", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Mudbound", year: 2017, genre: "drama", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Okja", year: 2017, genre: "adventure", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Uncut Gems", year: 2019, genre: "thriller", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "The Platform", year: 2019, genre: "thriller", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Shutter Island", year: 2010, genre: "mystery", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "The Social Network", year: 2010, genre: "drama", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Swiss Army Man", year: 2016, genre: "comedy", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "The Hateful Eight", year: 2015, genre: "western", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Roma", year: 2018, genre: "drama", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "The Fundamentals of Caring", year: 2016, genre: "comedy", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Klaus", year: 2019, genre: "animation", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Beasts of No Nation", year: 2015, genre: "war", provider: "netflix", url: "https://www.netflix.com/" },
+  { title: "Bright", year: 2017, genre: "fantasy", provider: "netflix", url: "https://www.netflix.com/" }
+];
+
+const hulu = [
+  { title: "Palm Springs", year: 2020, genre: "comedy", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Parasite", year: 2019, genre: "thriller", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Nomadland", year: 2020, genre: "drama", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Portrait of a Lady on Fire", year: 2019, genre: "romance", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Booksmart", year: 2019, genre: "comedy", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Freaky", year: 2020, genre: "horror", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Run", year: 2020, genre: "thriller", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Saint Maud", year: 2019, genre: "horror", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Happiest Season", year: 2020, genre: "romcom", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Little Monsters", year: 2019, genre: "comedy", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "The Lodge", year: 2019, genre: "horror", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "The United States vs. Billie Holiday", year: 2021, genre: "drama", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "The Mauritanian", year: 2021, genre: "drama", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Bad Education", year: 2019, genre: "drama", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Little Miss Sunshine", year: 2006, genre: "comedy", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "The Handmaiden", year: 2016, genre: "thriller", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "The Big Sick", year: 2017, genre: "romcom", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "A Ghost Story", year: 2017, genre: "drama", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Into the Wild", year: 2007, genre: "drama", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Midsommar", year: 2019, genre: "horror", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Whiplash", year: 2014, genre: "drama", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Her", year: 2013, genre: "romance", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "The Florida Project", year: 2017, genre: "drama", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Moonlight", year: 2016, genre: "drama", provider: "hulu", url: "https://www.hulu.com/" },
+  { title: "Eternal Sunshine of the Spotless Mind", year: 2004, genre: "romance", provider: "hulu", url: "https://www.hulu.com/" }
+];
+
+const hbomax = [
+  { title: "Dune", year: 2021, genre: "sci-fi", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "Joker", year: 2019, genre: "crime", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "Tenet", year: 2020, genre: "sci-fi", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "Mad Max: Fury Road", year: 2015, genre: "action", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "The Dark Knight", year: 2008, genre: "action", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "Interstellar", year: 2014, genre: "sci-fi", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "A Star Is Born", year: 2018, genre: "drama", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "La La Land", year: 2016, genre: "musical", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "Spotlight", year: 2015, genre: "drama", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "Get Out", year: 2017, genre: "horror", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "The Conjuring", year: 2013, genre: "horror", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "Inception", year: 2010, genre: "sci-fi", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "The Matrix", year: 1999, genre: "sci-fi", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "The Prestige", year: 2006, genre: "thriller", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "Wonder Woman", year: 2017, genre: "action", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "Blade Runner 2049", year: 2017, genre: "sci-fi", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "The Lord of the Rings: The Fellowship of the Ring", year: 2001, genre: "fantasy", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "The Shawshank Redemption", year: 1994, genre: "drama", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "Forrest Gump", year: 1994, genre: "drama", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "Schindler's List", year: 1993, genre: "drama", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "Gladiator", year: 2000, genre: "action", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "Fight Club", year: 1999, genre: "drama", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "The Departed", year: 2006, genre: "crime", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "Black Swan", year: 2010, genre: "drama", provider: "hbomax", url: "https://www.hbomax.com/" },
+  { title: "The Social Network", year: 2010, genre: "drama", provider: "hbomax", url: "https://www.hbomax.com/" }
+];
+
+const disney = [
+  { title: "The Lion King", year: 1994, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Soul", year: 2020, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Toy Story", year: 1995, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Toy Story 4", year: 2019, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Avengers: Endgame", year: 2019, genre: "action", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Black Panther", year: 2018, genre: "action", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Guardians of the Galaxy", year: 2014, genre: "sci-fi", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Captain Marvel", year: 2019, genre: "action", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Star Wars: The Force Awakens", year: 2015, genre: "adventure", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Rogue One", year: 2016, genre: "adventure", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Moana", year: 2016, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Frozen", year: 2013, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Coco", year: 2017, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "The Little Mermaid", year: 1989, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Up", year: 2009, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Finding Nemo", year: 2003, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Inside Out", year: 2015, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Zootopia", year: 2016, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "The Incredibles", year: 2004, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Brave", year: 2012, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Ratatouille", year: 2007, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "WALL-E", year: 2008, genre: "animation", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Pirates of the Caribbean: The Curse of the Black Pearl", year: 2003, genre: "adventure", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Thor: Ragnarok", year: 2017, genre: "action", provider: "disney", url: "https://www.disneyplus.com/" },
+  { title: "Doctor Strange", year: 2016, genre: "sci-fi", provider: "disney", url: "https://www.disneyplus.com/" }
+];
+
+let customMovies = [];
+
+let likedMovies = JSON.parse(localStorage.getItem('likedMovies') || '[]');
+let dislikedMovies = JSON.parse(localStorage.getItem('dislikedMovies') || '[]');
+let watchedMovies = JSON.parse(localStorage.getItem('watchedMovies') || '[]');
+
+function saveState() {
+  localStorage.setItem('likedMovies', JSON.stringify(likedMovies));
+  localStorage.setItem('dislikedMovies', JSON.stringify(dislikedMovies));
+  localStorage.setItem('watchedMovies', JSON.stringify(watchedMovies));
+}
+
+function renderWatched() {
+  const ul = document.getElementById('watchedList');
+  if (!ul) return;
+  ul.innerHTML = '';
+  watchedMovies.forEach((m, idx) => {
+    const li = document.createElement('li');
+    li.textContent = m.title + (m.year ? ` (${m.year})` : '') + ` — ${m.provider}`;
+    const remove = document.createElement('button');
+    remove.className = 'tiny';
+    remove.textContent = 'Remove';
+    remove.addEventListener('click', () => {
+      watchedMovies.splice(idx, 1);
+      saveState();
+      renderWatched();
+    });
+    li.appendChild(remove);
+    ul.appendChild(li);
+  });
+}
+
+function getSelectedMovies() {
+  const chosen = [];
+  chosen.push(...netflix);
+  chosen.push(...hulu);
+  chosen.push(...hbomax);
+  chosen.push(...disney);
+  if (customMovies.length) chosen.push(...customMovies);
+  return chosen;
+}
+
+function filterByGenre(list, genre) {
+  if (!genre) return list;
+  const g = genre.trim().toLowerCase();
+  return list.filter(m => (m.genre || '').toLowerCase().includes(g) || (m.title || '').toLowerCase().includes(g));
+}
+
+function pickRandom(list) {
+  if (!list.length) return null;
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+function computeRating(movie) {
+  const s = (movie.title || '') + (movie.year || '');
+  let hash = 0;
+  for (let i = 0; i < s.length; i++) {
+    hash = (hash * 31 + s.charCodeAt(i)) >>> 0;
+  }
+  const min = 5.0;
+  const max = 9.3;
+  const v = min + (hash % 1000) / 999 * (max - min);
+  return (Math.round(v * 10) / 10).toFixed(1);
+}
+
+function showResult(movie) {
+  const result = document.getElementById('result');
+  result.innerHTML = '';
+  if (!movie) {
+    result.innerHTML = '<p class="hint">No movies found for the selected providers/filters.</p>';
+    return;
+  }
+  const card = document.createElement('div');
+  card.className = 'card';
+  const title = document.createElement('h2');
+  title.textContent = movie.title + (movie.year ? ` (${movie.year})` : '');
+  card.appendChild(title);
+  const info = document.createElement('p');
+  info.textContent = `${(movie.genre || 'Unknown').toUpperCase()} • ${movie.provider.toUpperCase()}`;
+  card.appendChild(info);
+  if (movie.url) {
+    const a = document.createElement('a');
+    a.href = movie.url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.textContent = 'Open on provider';
+    card.appendChild(a);
+  }
+  const ratingP = document.createElement('p');
+  ratingP.className = 'rating';
+  ratingP.textContent = '';
+  card.appendChild(ratingP);
+  const actions = document.createElement('div');
+  actions.className = 'actions';
+  const likeBtn = document.createElement('button');
+  likeBtn.className = 'like';
+  likeBtn.textContent = likedMovies.find(m=>m.title===movie.title && m.provider===movie.provider) ? 'Liked' : 'Like';
+  likeBtn.addEventListener('click', () => {
+    const key = { title: movie.title, provider: movie.provider };
+    const exists = likedMovies.find(m=>m.title===movie.title && m.provider===movie.provider);
+    if (exists) {
+      likedMovies = likedMovies.filter(m=>!(m.title===movie.title && m.provider===movie.provider));
+      likeBtn.textContent = 'Like';
+    } else {
+      likedMovies.push(key);
+      dislikedMovies = dislikedMovies.filter(m=>!(m.title===movie.title && m.provider===movie.provider));
+      likeBtn.textContent = 'Liked';
+    }
+    saveState();
+  });
+  const dislikeBtn = document.createElement('button');
+  dislikeBtn.className = 'dislike';
+  dislikeBtn.textContent = dislikedMovies.find(m=>m.title===movie.title && m.provider===movie.provider) ? 'Disliked' : 'Dislike';
+  dislikeBtn.addEventListener('click', () => {
+    const key = { title: movie.title, provider: movie.provider };
+    const exists = dislikedMovies.find(m=>m.title===movie.title && m.provider===movie.provider);
+    if (exists) {
+      dislikedMovies = dislikedMovies.filter(m=>!(m.title===movie.title && m.provider===movie.provider));
+      dislikeBtn.textContent = 'Dislike';
+    } else {
+      dislikedMovies.push(key);
+      likedMovies = likedMovies.filter(m=>!(m.title===movie.title && m.provider===movie.provider));
+      dislikeBtn.textContent = 'Disliked';
+    }
+    saveState();
+  });
+  const watchedBtn = document.createElement('button');
+  watchedBtn.className = 'watchedBtn';
+  watchedBtn.textContent = 'Already watched';
+  watchedBtn.addEventListener('click', () => {
+    if (!watchedMovies.find(m=>m.title===movie.title && m.provider===movie.provider)) {
+      watchedMovies.push({ title: movie.title, year: movie.year, provider: movie.provider });
+      saveState();
+      renderWatched();
+    }
+  });
+  actions.appendChild(likeBtn);
+  actions.appendChild(dislikeBtn);
+  actions.appendChild(watchedBtn);
+  card.appendChild(actions);
+  result.appendChild(card);
+  ratingP.textContent = `IMDb: ${movie.imdb ? movie.imdb : computeRating(movie)} / 10`;
+}
+
+document.getElementById('randomize').addEventListener('click', () => {
+  const genre = document.getElementById('genre').value;
+  const list = getSelectedMovies();
+  const filtered = filterByGenre(list, genre);
+  const chosen = pickRandom(filtered);
+  showResult(chosen);
+});
+document.getElementById('clearWatched')?.addEventListener('click', () => {
+  watchedMovies = [];
+  saveState();
+  renderWatched();
+});
+
+renderWatched();
+
+function setupGenreTabs() {
+  const tabs = Array.from(document.querySelectorAll('.genre-tab'));
+  const genreInput = document.getElementById('genre');
+  if (!tabs.length || !genreInput) return;
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const g = (tab.dataset.genre || 'all').toLowerCase();
+      genreInput.value = g === 'all' ? '' : g;
+    });
+  });
+  const active = document.querySelector('.genre-tab.active') || tabs[0];
+  if (active) {
+    const g = (active.dataset.genre || 'all').toLowerCase();
+    genreInput.value = g === 'all' ? '' : g;
+  }
+}
+
+setupGenreTabs();
+  </script>
+</body>
+</html>
