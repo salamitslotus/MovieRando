@@ -140,5 +140,33 @@
   </main>
 
   <script src="script.js"></script>
+  
+  <!-- Diagnostic script to debug GitHub Pages issues -->
+  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        console.log('=== PAGE LOAD DIAGNOSTIC ===');
+        console.log('URL:', window.location.href);
+        console.log('CSS loaded:', !!document.querySelector('link[href*="style.css"]'));
+        console.log('searchBtn element:', document.getElementById('searchBtn'));
+        console.log('movieSearch element:', document.getElementById('movieSearch'));
+        console.log('searchResults container:', document.getElementById('searchResults'));
+        console.log('allMovies count:', typeof allMovies !== 'undefined' ? allMovies.length : 'undefined');
+        console.log('csvMovies count:', typeof csvMovies !== 'undefined' ? csvMovies.length : 'undefined');
+        
+        // Check computed styles
+        const searchBtn = document.getElementById('searchBtn');
+        if (searchBtn) {
+          const styles = window.getComputedStyle(searchBtn);
+          console.log('Search button computed styles:', {
+            display: styles.display,
+            visibility: styles.visibility,
+            opacity: styles.opacity,
+            backgroundColor: styles.backgroundColor
+          });
+        }
+      }, 500);
+    });
+  </script>
 </body>
 </html>

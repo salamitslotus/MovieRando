@@ -651,3 +651,28 @@ renderList('watchedList', watchedMovies);
 renderList('dislikedList', dislikedMovies);
 
 console.log('=== SCRIPT FULLY LOADED ===');
+console.log('Final state:', {
+  csvMovies: csvMovies.length,
+  allMovies: allMovies.length,
+  genreList: genreList.length,
+  likedMovies: likedMovies.length,
+  dislikedMovies: dislikedMovies.length,
+  watchedMovies: watchedMovies.length,
+  searchBtnExists: !!document.getElementById('searchBtn'),
+  searchInputExists: !!document.getElementById('movieSearch'),
+  resultsContainerExists: !!document.getElementById('searchResults')
+});
+
+// Final verification - test search functionality
+window.testSearch = function(query) {
+  const searchBtn = document.getElementById('searchBtn');
+  const movieSearchInput = document.getElementById('movieSearch');
+  if (movieSearchInput && searchBtn) {
+    movieSearchInput.value = query;
+    searchBtn.click();
+    console.log('Test search executed for:', query);
+  } else {
+    console.error('Search elements not found!');
+  }
+};
+console.log('Test function available: window.testSearch("matrix")');
