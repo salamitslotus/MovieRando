@@ -131,7 +131,12 @@ console.log('Initial state loaded - genres:', genreList);
 // ============================================
 // LOAD CSV DATA
 // ============================================
-fetch('MoviesOnStreamingPlatforms.csv')
+// Try to load from GitHub raw content first (for GitHub Pages), fall back to relative path (for localhost)
+const csvUrl = window.location.hostname === 'localhost' 
+  ? 'MoviesOnStreamingPlatforms.csv'
+  : 'https://raw.githubusercontent.com/salamitslotus/MovieRando/main/MoviesOnStreamingPlatforms.csv';
+
+fetch(csvUrl)
   .then(r => r.text())
   .then(csv => {
     const lines = csv.split('\n').slice(1);
@@ -166,9 +171,9 @@ fetch('MoviesOnStreamingPlatforms.csv')
         }
       }
     });
-    console.log('CSV loaded - movies found:', csvMovies.length);
+    console.log('CSV loaded from:', csvUrl, '- movies found:', csvMovies.length);
   })
-  .catch(e => console.error('CSV load error:', e));
+  .catch(e => console.error('CSV load error:', e, 'URL attempted:', csvUrl));
 
 // ============================================
 // UTILITY FUNCTIONS
