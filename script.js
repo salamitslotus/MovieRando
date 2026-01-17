@@ -309,7 +309,10 @@ function displaySearchResults(results) {
       providersHTML = '<span>' + m.provider + '</span>';
     }
     
-    card.innerHTML = `<h3>${m.title}</h3><p>Year: ${m.year}</p><div class="rating">⭐ ${rating}</div><div class="search-result-platforms">${providersHTML}</div><div class="actions"><button class="like">❤️</button><button class="dislike">👎</button><button class="watchedBtn">✓</button></div>`;
+    // Only show rating if it's not N/A
+    const ratingHTML = rating !== 'N/A' ? `<div class="rating">⭐ ${rating}</div>` : '';
+    
+    card.innerHTML = `<h3>${m.title}</h3><p>Year: ${m.year}</p>${ratingHTML}<div class="search-result-platforms">${providersHTML}</div><div class="actions"><button class="like">❤️</button><button class="dislike">👎</button><button class="watchedBtn">✓</button></div>`;
     
     const like = card.querySelector('.like');
     const dislike = card.querySelector('.dislike');
