@@ -282,23 +282,42 @@ function showMovie(m) {
 
 function displaySearchResults(results) {
   const container = document.getElementById('searchResults');
-  if (!results.length) {
-    container.innerHTML = '<p class="hint">❌ No movies found</p>';
+  console.log('displaySearchResults called with:', results.length, 'results, container:', container);
+  
+  if (!container) {
+    console.error('Search results container not found!');
     return;
   }
+  
+  if (!results.length) {
+    container.innerHTML = '<p class="hint">❌ No movies found</p>';
+    console.log('No results to display');
+    return;
+  }
+  
   container.innerHTML = '';
   results.slice(0, 50).forEach(m => {
     const card = document.createElement('div');
     card.className = 'search-result-card';
     const rating = m.rating || 'N/A';
-    card.innerHTML = `<h3>${m.title}</h3><p>Year: ${m.year}</p><div class="rating">⭐ ${rating}</div><div class="search-result-platforms">${m.providers ? m.providers.map(p => '<span>' + p + '</span>').join('') : ''}</div><div class="actions"><button class="like">❤️</button><button class="dislike">👎</button><button class="watchedBtn">✓</button></div>`;
+    
+    // Handle both CSV format (providers array) and built-in format (provider string)
+    let providersHTML = '';
+    if (m.providers && Array.isArray(m.providers)) {
+      providersHTML = m.providers.map(p => '<span>' + p + '</span>').join('');
+    } else if (m.provider) {
+      providersHTML = '<span>' + m.provider + '</span>';
+    }
+    
+    card.innerHTML = `<h3>${m.title}</h3><p>Year: ${m.year}</p><div class="rating">⭐ ${rating}</div><div class="search-result-platforms">${providersHTML}</div><div class="actions"><button class="like">❤️</button><button class="dislike">👎</button><button class="watchedBtn">✓</button></div>`;
     
     const like = card.querySelector('.like');
     const dislike = card.querySelector('.dislike');
     const watched = card.querySelector('.watchedBtn');
     
     like.onclick = () => {
-      const movie = {title: m.title, year: m.year, provider: m.providers?.[0] || 'Unknown', genre: 'Unknown'};
+      const provider = m.providers?.[0] || m.provider || 'Unknown';
+      const movie = {title: m.title, year: m.year, provider: provider, genre: 'Unknown'};
       if (!likedMovies.some(x => x.title === movie.title)) {
         likedMovies.push(movie);
         save();
@@ -306,7 +325,8 @@ function displaySearchResults(results) {
       }
     };
     dislike.onclick = () => {
-      const movie = {title: m.title, year: m.year, provider: m.providers?.[0] || 'Unknown', genre: 'Unknown'};
+      const provider = m.providers?.[0] || m.provider || 'Unknown';
+      const movie = {title: m.title, year: m.year, provider: provider, genre: 'Unknown'};
       if (!dislikedMovies.some(x => x.title === movie.title)) {
         dislikedMovies.push(movie);
         save();
@@ -314,7 +334,8 @@ function displaySearchResults(results) {
       }
     };
     watched.onclick = () => {
-      const movie = {title: m.title, year: m.year, provider: m.providers?.[0] || 'Unknown', genre: 'Unknown'};
+      const provider = m.providers?.[0] || m.provider || 'Unknown';
+      const movie = {title: m.title, year: m.year, provider: provider, genre: 'Unknown'};
       if (!watchedMovies.some(x => x.title === movie.title)) {
         watchedMovies.push(movie);
         save();
@@ -324,6 +345,7 @@ function displaySearchResults(results) {
     
     container.appendChild(card);
   });
+  console.log('Rendered', results.length, 'movies');
 }
 
 // ============================================
@@ -408,17 +430,39 @@ if (searchBtn) {
   searchBtn.addEventListener('click', () => {
     const query = movieSearchInput.value.toLowerCase().trim();
     const platform = platformFilter.value;
-    console.log('Search query:', query, 'Platform:', platform, 'CSV movies available:', csvMovies.length);
+    console.log('Search query:', query, 'Platform filter:', platform, 'CSV movies:', csvMovies.length, 'Built-in movies:', allMovies.length);
+    
+    // If no query entered, don't search
+    if (!query) {
+      console.log('Empty search query');
+      document.getElementById('searchResults').innerHTML = '<p class="hint">Please enter a movie title to search</p>';
+      return;
+    }
     
     // Search in both CSV movies and built-in movies
-    let results = csvMovies.length > 0 ? csvMovies : allMovies;
-    results = results.filter(m => {
+    let searchSource = csvMovies.length > 0 ? csvMovies : allMovies;
+    console.log('Searching in:', csvMovies.length > 0 ? 'CSV movies' : 'Built-in movies', '(' + searchSource.length + ' total)');
+    
+    let results = searchSource.filter(m => {
       const matchTitle = m.title.toLowerCase().includes(query);
-      const matchPlatform = !platform || (m.providers ? m.providers.includes(platform) : m.provider === platform);
+      
+      // If no platform selected, show all matching titles
+      if (!platform) {
+        return matchTitle;
+      }
+      
+      // If platform selected, check if movie is on that platform
+      let matchPlatform = false;
+      if (m.providers && Array.isArray(m.providers)) {
+        matchPlatform = m.providers.includes(platform);
+      } else if (m.provider) {
+        matchPlatform = m.provider === platform;
+      }
+      
       return matchTitle && matchPlatform;
     });
     
-    console.log('Search results found:', results.length);
+    console.log('Search results found:', results.length, 'matching query:', query);
     displaySearchResults(results.sort((a, b) => a.title.localeCompare(b.title)));
   });
   if (movieSearchInput) {
