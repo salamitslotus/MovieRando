@@ -126,18 +126,32 @@ let likedMovies = JSON.parse(localStorage.getItem('likedMovies') || '[]');
 let dislikedMovies = JSON.parse(localStorage.getItem('dislikedMovies') || '[]');
 let watchedMovies = JSON.parse(localStorage.getItem('watchedMovies') || '[]');
 
+console.log('=== MOVIE RANDO STARTED ===');
+console.log('Page URL:', window.location.href);
 console.log('Initial state loaded - genres:', genreList);
 
 // ============================================
 // LOAD CSV DATA
 // ============================================
-// Try to load from GitHub raw content first (for GitHub Pages), fall back to relative path (for localhost)
-const csvUrl = window.location.hostname === 'localhost' 
-  ? 'MoviesOnStreamingPlatforms.csv'
-  : 'https://raw.githubusercontent.com/salamitslotus/MovieRando/main/MoviesOnStreamingPlatforms.csv';
+// Detect if running on GitHub Pages and use appropriate URL
+const isGitHubPages = window.location.hostname.includes('github.io') || 
+                      window.location.hostname.includes('salamitslotus.github.io');
+const csvUrl = isGitHubPages || window.location.hostname !== 'localhost'
+  ? 'https://raw.githubusercontent.com/salamitslotus/MovieRando/main/MoviesOnStreamingPlatforms.csv'
+  : 'MoviesOnStreamingPlatforms.csv';
 
-fetch(csvUrl)
-  .then(r => r.text())
+console.log('Environment detected - GitHub Pages:', isGitHubPages, 'Hostname:', window.location.hostname, 'CSV URL:', csvUrl);
+
+fetch(csvUrl, {
+  headers: {
+    'Accept': 'text/plain',
+    'Cache-Control': 'no-cache'
+  }
+})
+  .then(r => {
+    if (!r.ok) throw new Error(`HTTP error! status: ${r.status}`);
+    return r.text();
+  })
   .then(csv => {
     const lines = csv.split('\n').slice(1);
     lines.forEach(line => {
@@ -171,9 +185,9 @@ fetch(csvUrl)
         }
       }
     });
-    console.log('CSV loaded from:', csvUrl, '- movies found:', csvMovies.length);
+    console.log('CSV loaded successfully - movies found:', csvMovies.length);
   })
-  .catch(e => console.error('CSV load error:', e, 'URL attempted:', csvUrl));
+  .catch(e => console.error('CSV load error:', e, 'tried URL:', csvUrl));
 
 // ============================================
 // UTILITY FUNCTIONS
