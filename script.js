@@ -408,11 +408,17 @@ if (searchBtn) {
   searchBtn.addEventListener('click', () => {
     const query = movieSearchInput.value.toLowerCase().trim();
     const platform = platformFilter.value;
-    let results = csvMovies.filter(m => {
+    console.log('Search query:', query, 'Platform:', platform, 'CSV movies available:', csvMovies.length);
+    
+    // Search in both CSV movies and built-in movies
+    let results = csvMovies.length > 0 ? csvMovies : allMovies;
+    results = results.filter(m => {
       const matchTitle = m.title.toLowerCase().includes(query);
-      const matchPlatform = !platform || m.providers.includes(platform);
+      const matchPlatform = !platform || (m.providers ? m.providers.includes(platform) : m.provider === platform);
       return matchTitle && matchPlatform;
     });
+    
+    console.log('Search results found:', results.length);
     displaySearchResults(results.sort((a, b) => a.title.localeCompare(b.title)));
   });
   if (movieSearchInput) {
