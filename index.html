@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#c41e3a" />
   <title>Movie Rando Fragrant</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -62,29 +65,45 @@
     <section class="controls">
       <p class="subtitle">Pick a genre and discover your next favorite movie!</p>
 
-      <div class="genre-tabs" aria-label="Genre tabs">
-        <button class="genre-tab active" data-genre="all">All</button>
-        <button class="genre-tab" data-genre="action">Action</button>
-        <button class="genre-tab" data-genre="comedy">Comedy</button>
-        <button class="genre-tab" data-genre="drama">Drama</button>
-        <button class="genre-tab" data-genre="romance">Romance</button>
-        <button class="genre-tab" data-genre="adventure">Adventure</button>
-        <button class="genre-tab" data-genre="horror">Horror</button>
-        <button class="genre-tab" data-genre="sci-fi">Sci-Fi</button>
-        <button class="genre-tab" data-genre="thriller">Thriller</button>
-        <button class="genre-tab" data-genre="animation">Animation</button>
-        <button class="genre-tab" data-genre="family">Family</button>
-        <button class="genre-tab" data-genre="fantasy">Fantasy</button>
-        <button class="genre-tab" data-genre="crime">Crime</button>
-        <button class="genre-tab" data-genre="documentary">Documentary</button>
+      <div class="genre-tabs" role="tablist" aria-label="Genre tabs">
+        <button class="genre-tab active" data-genre="all" role="tab" aria-selected="true">All</button>
+        <button class="genre-tab" data-genre="action" role="tab" aria-selected="false">Action</button>
+        <button class="genre-tab" data-genre="comedy" role="tab" aria-selected="false">Comedy</button>
+        <button class="genre-tab" data-genre="drama" role="tab" aria-selected="false">Drama</button>
+        <button class="genre-tab" data-genre="romance" role="tab" aria-selected="false">Romance</button>
+        <button class="genre-tab" data-genre="adventure" role="tab" aria-selected="false">Adventure</button>
+        <button class="genre-tab" data-genre="horror" role="tab" aria-selected="false">Horror</button>
+        <button class="genre-tab" data-genre="sci-fi" role="tab" aria-selected="false">Sci-Fi</button>
+        <button class="genre-tab" data-genre="thriller" role="tab" aria-selected="false">Thriller</button>
+        <button class="genre-tab" data-genre="animation" role="tab" aria-selected="false">Animation</button>
+        <button class="genre-tab" data-genre="family" role="tab" aria-selected="false">Family</button>
+        <button class="genre-tab" data-genre="fantasy" role="tab" aria-selected="false">Fantasy</button>
+        <button class="genre-tab" data-genre="crime" role="tab" aria-selected="false">Crime</button>
+        <button class="genre-tab" data-genre="documentary" role="tab" aria-selected="false">Documentary</button>
       </div>
 
       <div class="filters">
         <div class="genre-search-container">
-          <input id="genre" placeholder="Or type a genre..." />
-          <ul id="genreSuggestions" class="genre-suggestions"></ul>
+          <input id="genre" placeholder="Or type a genre..." aria-label="Search for a genre" />
+          <ul id="genreSuggestions" class="genre-suggestions" role="listbox"></ul>
         </div>
-        <button id="randomize" class="btn-primary">🎲 Randomize</button>
+        <button id="randomize" class="btn-primary" aria-label="Get a random movie">🎲 Randomize</button>
+      </div>
+
+      <div style="margin-top:20px;padding-top:20px;border-top:1px solid rgba(196,30,58,.15);">
+        <p class="subtitle" style="margin:0 0 12px;">Or search for a specific movie</p>
+        <div class="search-container">
+          <input id="movieSearch" type="text" placeholder="Search by title..." aria-label="Search for a specific movie" />
+          <select id="platformFilter" aria-label="Filter by streaming platform">
+            <option value="">All Platforms</option>
+            <option value="Netflix">Netflix</option>
+            <option value="Hulu">Hulu</option>
+            <option value="Prime Video">Prime Video</option>
+            <option value="Disney+">Disney+</option>
+          </select>
+          <button id="searchBtn" class="btn-primary" style="font-size:14px;">🔍 Search</button>
+        </div>
+        <div id="searchResults" class="search-results-container"></div>
       </div>
       
     </section>
